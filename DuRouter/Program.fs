@@ -4,13 +4,6 @@ open System
 open Newtonsoft
 open Newtonsoft.Json
 
-type Response<'ret> =
-    {
-        mutable Return: 'ret
-    }
-
-//type ServerResponse<'ret> = ServerResponse of 'ret
-
 type Dooter internal (ret: obj, t: Type) =
     override this.ToString() =
         JsonConvert.SerializeObject(ret, t, null)
@@ -24,14 +17,8 @@ type ServerRequest<'req, 'res> = ServerRequest of 'req * 'res
     member this.HandleWith<'a>(f: 'req -> 'res) : Dooter =
         match this with
         | ServerRequest (req, response) ->
-            Dooter(f req, typeof<'ret>)
+            Dooter(f req, typeof<'res>)
 //            response.Return <- f req
-
-//let inline handleRequest (request: ServerRequest<'req, 'ret>) (f: 'req -> 'ret) : ServerResponse<'ret> =
-//let inline handleRequest (request: ServerRequest<'req, 'ret>) (f: 'req -> 'ret) : unit =
-//    match request with
-//    | ServerRequest (req, response) ->
-//            response.Return <- ()
 
 type Complex = { Id: int; Name: string }
     
@@ -44,20 +31,16 @@ and Fuzzy =
     | Bunnie
     | Foxie
     
-//type Foo =
-//    | GetBar of ServerRequest<
 type Request =
     | GetName of ServerRequest<int, string>
     | GetId of ServerRequest<string, int>
     | FindCowsie of ServerRequest<unit, Complex>
     | FindCutie of ServerRequest<unit, Cuties>
-    
-//let inline handleRequest (request: ServerRequest<'req, 'ret>) (f: 'req -> 'ret) =
-//    match request with
-//    | ServerRequest (req, response) ->
-//        response.Return <- f req
         
-let inline makeRequest (duCase: ServerRequest<'req, 'ret> -> 'du) (req: 'req) = duCase (ServerRequest (req, Unchecked.defaultof<'ret>))
+let makeRequest (duCase: ServerRequest<'req, 'ret> -> 'du) (req: 'req) =
+    let request = duCase (ServerRequest (req, Unchecked.defaultof<'ret>))
+    JsonConvert.SerializeObject(request, typeof<'req>, null)
+    
     
 let getName id =
     match id with
@@ -75,7 +58,8 @@ let findCowsie () =
 let findCutie () =
     Cuties.Fuzzies (Fuzzy.Cowsie)
     
-let router (request: Request) : Dooter =
+let router (request: string) : Dooter =
+    let request = JsonConvert.DeserializeObject<Request>(request)
     match request with
     | GetName r -> r.HandleWith(getName) //handleRequest r getName
     | GetId r -> r.HandleWith(getId) //r.HandleWith(getId)
@@ -85,15 +69,15 @@ let router (request: Request) : Dooter =
 let inline routeDu path (f: 'req -> Dooter) =
     f (Unchecked.defaultof<'req>)
     
-routeDu "/api" router
+let fetch (duCase: ServerRequest<'req, 'ret> -> 'du) (req: 'req) =
+    let requestBody = makeRequest duCase req
+    let response = router requestBody
+    let responseBody = response.ToString()
+    let returnVal = JsonConvert.DeserializeObject<'ret>(responseBody.ToString())
+    returnVal
     
 [<EntryPoint>]
 let main argv =
-    let req = makeRequest Request.FindCowsie () 
-    let ret = router req
-    let req' = makeRequest Request.FindCutie () 
-    let ret' = router req'
-    printfn "Hello World from F#!"
-    printfn "%A" ret
-    printfn "%A" ret'
+    let cowsie = fetch Request.FindCowsie ()
+    printfn "%A" cowsie
     0 // return an integer exit code
