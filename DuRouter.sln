@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DuRouter", "DuRouter\DuRouter.fsproj", "{15576886-369A-4848-937E-8747157F4BA3}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Client", "Client\Client.fsproj", "{BF8485BC-2120-47DF-9495-FE25E2B0E6A6}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Server", "Server\Server.fsproj", "{6E752C52-F049-492E-96C3-052703B1B9DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{15576886-369A-4848-937E-8747157F4BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15576886-369A-4848-937E-8747157F4BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15576886-369A-4848-937E-8747157F4BA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF8485BC-2120-47DF-9495-FE25E2B0E6A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF8485BC-2120-47DF-9495-FE25E2B0E6A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF8485BC-2120-47DF-9495-FE25E2B0E6A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF8485BC-2120-47DF-9495-FE25E2B0E6A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E752C52-F049-492E-96C3-052703B1B9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E752C52-F049-492E-96C3-052703B1B9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E752C52-F049-492E-96C3-052703B1B9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E752C52-F049-492E-96C3-052703B1B9DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
