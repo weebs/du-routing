@@ -1,19 +1,17 @@
-﻿// Learn more about F# at http://fsharp.org
-
-module SongServer
+﻿module SongServer
 
 open DuRouter
 open System.Text
     
     
 // Models
-type SongType =
+type Song = { Id: int; Name: string; SongType: SongType; Artists: string list }
+and SongType =
     | Original
-    | Feature of artists: string list
+    | Featuring of artists: string list
     | Remix of original: Song
     | VIP of original: Song
     | Cover of original: Song
-and Song = { Id: int; Name: string; SongType: SongType; Artists: string list }
     
 // API definition
 type Api =
@@ -21,6 +19,7 @@ type Api =
     | FindSongsByName of ServerRequest<string, Song[]>
     | ReverseString of ServerRequest<string, string>
     
+// Handlers
 let findSongById (id: int) : Song option =
     let songDb = Map.ofList [
         1, { Id = 1; Name = "Funk Blaster"; Artists = [ "KOAN Sound" ]; SongType = Original }
@@ -47,6 +46,7 @@ let findSongsByName (name: string) : Song[] =
     |> Map.toArray
     |> Array.map snd
     
+// Router
 let router (request: Api) : Response =
     match request with
     | FindSongById r -> r.HandleWith(findSongById)
@@ -57,3 +57,10 @@ let router (request: Api) : Response =
             reversed.Append(s.[index]) |> ignore
         reversed.ToString()
     )
+
+// Server Init
+// let main argv =
+    // ...
+    // Code to initialize web server on hostname+port, and route requests
+    // from a specified endpoint (ex: "/api") to the above function (router)
+    // ...

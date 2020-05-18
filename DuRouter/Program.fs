@@ -7,18 +7,14 @@ type Response internal (ret: obj, t: Type) =
     override this.ToString() =
         JsonConvert.SerializeObject(ret, t, null)
     
+// todo: Experiment with making ServerRequest a record/struct { Request: 'req; Response: 'res }
 type ServerRequest<'req, 'res> = ServerRequest of 'req * 'res
-//    {
-//        Request: 'req
-//        Response: 'res
-//    }
     with
     static member Create(req: 'req) = ServerRequest (req, Unchecked.defaultof<'res>)
     member this.HandleWith<'a>(f: 'req -> 'res) : Response =
         match this with
         | ServerRequest (req, response) ->
             Response(f req, typeof<'res>)
-//            response.Return <- f req
         
 let makeRequestBody (duCase: ServerRequest<'req, 'ret> -> 'du) (req: 'req) =
     let request = duCase (ServerRequest (req, Unchecked.defaultof<'ret>))
@@ -43,6 +39,7 @@ type Api<'du>(router: Func<'du, Response>) =
         let responseBody = response.ToString()
         let returnVal = JsonConvert.DeserializeObject<'res>(responseBody.ToString())
         res <- returnVal
+        
     member this.Request<'req, 'res>(makeDuCase: Func<ServerRequest<'req, 'res>, 'du>, req: 'req) : 'res =
         let request = makeDuCase.Invoke(ServerRequest (req, Unchecked.defaultof<'res>))
         let requestBody = JsonConvert.SerializeObject(request, typeof<'du>, null)

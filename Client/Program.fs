@@ -8,4 +8,5 @@ let main argv =
     printfn "Found %d songs" songs.Length
     for song in songs do
         printfn "%A" song
-    0 // return an integer exit code
+        
+    0
