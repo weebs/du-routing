@@ -1,6 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open SongServer
+﻿open SongServer
 
 [<EntryPoint>]
 let main argv =
