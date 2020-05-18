@@ -14,6 +14,7 @@ namespace CsClient
             api.Send(NewFindSongById, 1, out FSharpOption<Song> song);
             var otherSong = api.Request<int, FSharpOption<Song>>(NewFindSongById, 2);
             var kilterSongs = api.Request<string, Song[]>(NewFindSongsByName, "kilter");
+            NewReverseString(new DuRouter.ServerRequest<string, string>("foo"));
             Console.WriteLine("Done");
         }
     }
