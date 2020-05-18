@@ -7,7 +7,6 @@ type Response internal (ret: obj, t: Type) =
     override this.ToString() =
         JsonConvert.SerializeObject(ret, t, null)
     
-// todo: Experiment with making ServerRequest a record/struct { Request: 'req; Response: 'res }
 type ServerRequest<'req, 'res>(req: 'req) =
     member this.Request = req
     member this.Response = Unchecked.defaultof<'res>
