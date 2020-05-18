@@ -8,22 +8,15 @@ type Response internal (ret: obj, t: Type) =
         JsonConvert.SerializeObject(ret, t, null)
     
 // todo: Experiment with making ServerRequest a record/struct { Request: 'req; Response: 'res }
-type ServerRequest<'req, 'res>(req: 'req) = // ServerRequest of 'req * 'res
-//    { Request: 'req; Response: 'res }
+type ServerRequest<'req, 'res>(req: 'req) =
     member this.Request = req
     member this.Response = Unchecked.defaultof<'res>
     with
-//    static member Create(req: 'req) = ServerRequest (req, Unchecked.defaultof<'res>)
     // todo: An override for HandleWith could be created that makes it simple to write handlers in C#
     member this.HandleWith(f: 'req -> 'res) : Response =
         Response(f this.Request, typeof<'res>)
-//        match this with
-//        | ServerRequest (req, response) ->
-//            Response(f req, typeof<'res>)
         
 let makeRequestBody (duCase: ServerRequest<'req, 'ret> -> 'du) (req: 'req) =
-//    let request = duCase (ServerRequest (req, Unchecked.defaultof<'ret>))
-//    let request = duCase ({ Request = req; Response = Unchecked.defaultof<'ret> })
     let request = duCase (ServerRequest(req))
     JsonConvert.SerializeObject(request, typeof<'req>, null)
     
@@ -40,7 +33,6 @@ let makeFetch router =
         
 type Api<'du>(router: Func<'du, Response>) =
     member this.Send(makeDuCase: Func<ServerRequest<'req, 'res>, 'du>, req: 'req, res: 'res outref) : unit =
-//        let request = makeDuCase.Invoke(ServerRequest (req, Unchecked.defaultof<'res>))
         let request = makeDuCase.Invoke(ServerRequest(req))
         let requestBody = JsonConvert.SerializeObject(request, typeof<'du>, null)
         let response = router.Invoke(JsonConvert.DeserializeObject<'du>(requestBody))
@@ -49,7 +41,6 @@ type Api<'du>(router: Func<'du, Response>) =
         res <- returnVal
         
     member this.Request<'req, 'res>(makeDuCase: Func<ServerRequest<'req, 'res>, 'du>, req: 'req) : 'res =
-//        let request = makeDuCase.Invoke(ServerRequest (req, Unchecked.defaultof<'res>))
         let request = makeDuCase.Invoke(ServerRequest(req))
         let requestBody = JsonConvert.SerializeObject(request, typeof<'du>, null)
         let response = router.Invoke(JsonConvert.DeserializeObject<'du>(requestBody))
